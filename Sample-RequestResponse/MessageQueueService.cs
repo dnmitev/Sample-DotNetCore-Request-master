@@ -21,7 +21,7 @@ namespace Sample_RequestResponse
         {
             _bus = Bus.Factory.CreateUsingActiveMq(cfg =>
                           {
-                              cfg.Host("broker-amq-amqp-dnmitev.apps.appcanvas.net", h =>
+                              cfg.Host("broker-amq-amqp.dnmitev.svc.cluster.local", h =>
                               {
                                   h.Username("admin");
                                   h.Password("admin");
