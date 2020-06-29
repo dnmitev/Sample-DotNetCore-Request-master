@@ -1,8 +1,10 @@
 ﻿using System;
+
 using MassTransit;
 using MassTransit.ActiveMqTransport;
 
 using MessageContracts;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,14 +21,19 @@ namespace WebApplication1
 
             var bus = Bus.Factory.CreateUsingActiveMq(cfg =>
             {
-                var host = cfg.Host(new Uri("activemq://broker-amq-amqp-dnmitev.apps.appcanvas.net/"), h => { h.Username("admin"); h.Password("admin"); });
+                var host = cfg.Host("broker-amq-amqp-dnmitev.apps.appcanvas.net",
+                    h =>
+                    {
+                        h.Username("admin");
+                        h.Password("admin");
+                    });
             });
 
             services.AddSingleton<IPublishEndpoint>(bus);
             services.AddSingleton<ISendEndpointProvider>(bus);
             services.AddSingleton<IBus>(bus);
 
-            var timeout = TimeSpan.FromSeconds(10);
+            var timeout = TimeSpan.FromSeconds(60);
             var serviceAddress = new Uri("activemq://broker-amq-amqp-dnmitev.apps.appcanvas.net/order-service");
 
             services.AddScoped<IRequestClient<SubmitOrder, OrderAccepted>>(x =>
@@ -41,7 +48,7 @@ namespace WebApplication1
             if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
             app.UseMvc();
-//            app.Run();
+            //            app.Run();
         }
     }
 }
